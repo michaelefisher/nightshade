@@ -20,6 +20,11 @@ import del from 'del';
 import imagemin from 'gulp-imagemin';
 import pngquant from 'imagemin-pngquant';
 import sassLint from 'gulp-sass-lint';
+import dotenv from 'dotenv';
+import awspublish from 'gulp-awspublish';
+import gulpIf from 'gulp-if';
+import { config } from './config.js';
+
 
 const browserSync = browsersync.create();
 
@@ -232,6 +237,50 @@ gulp.task('images', () => {
       use: [pngquant({quality: '86'})]
     }))
     .pipe(gulp.dest('./dist/assets/img'));
+});
+
+
+// Publish to AWS
+gulp.task('publish', () => {
+  const day = 86400;
+  const farFuture = {'Cache-Control': `max-age=${day * 365}`};
+  const future = {'Cache-Control': `max-age=${day * 7}`};
+  const noCache = {'Cache-Control': 'no-cache'};
+
+  const gzipTypes = '**/*.{html,css,js,svg,ico,json,txt}';
+  const cacheBustedTypes = '**/*.{css,js}';
+  const cachedTypes = '**/*.{gif,jpeg,jpg,png,svg,webp,ico,woff,woff2}';
+  const noCacheTypes = '**/*.{html,json,xml,txt}';
+  const otherTypes = [
+    '**/*',
+    `!${cacheBustedTypes}`,
+    `!${cachedTypes}`,
+    `!${noCacheTypes}`
+  ];
+
+  // Creates a new publisher using S3 options
+  // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#constructor-property
+  const publisher = awspublish.create({
+    params: {
+      region: config.s3.region,
+      Bucket: config.s3.bucket,
+    },
+      "accessKeyId": env.S3_ACCESSID,
+      "secretAccessKey": env.S3_KEY
+  });
+
+  const headers = {
+    'Cache-Control': 'max-age=315360000, no-transform, public'
+  };
+
+  return gulp.src('./dist/**/*')
+    .pipe(plumber())
+    .pipe(gulpIf(gzipTypes, awspublish.gzip()))
+    .pipe(gulpIf(cacheBustedTypes, publisher.publish(farFuture)))
+    .pipe(gulpIf(cachedTypes, publisher.publish(future)))
+    .pipe(gulpIf(noCacheTypes, publisher.publish(noCache)))
+    .pipe(gulpIf(otherTypes, publisher.publish()))
+    .pipe(awspublish.reporter());
 });
 
 
