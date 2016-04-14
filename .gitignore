@@ -38,3 +38,6 @@ jspm_packages
 
 # Ignore .DS_store file
 .DS_Store
+
+# Secure information
+.env

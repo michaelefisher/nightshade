@@ -49,6 +49,11 @@ const createFile = (name, data) => {
 //   }));
 // });
 
+gulp.task('setup', () => {
+  fs.createReadStream('.sample-env')
+    .pipe(fs.createWriteStream('.env'));
+});
+
 
 // Generates a file of all the icons
 gulp.task('icons-config', () => {
