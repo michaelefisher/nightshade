@@ -16,6 +16,10 @@ import source from 'vinyl-source-stream';
 import plumber from 'gulp-plumber';
 import markdown from 'nunjucks-markdown';
 import marked from 'marked';
+import del from 'del';
+import imagemin from 'gulp-imagemin';
+import pngquant from 'imagemin-pngquant';
+import sassLint from 'gulp-sass-lint';
 
 const browserSync = browsersync.create();
 
@@ -64,6 +68,7 @@ gulp.task('icons-config', () => {
     });
 });
 
+
 // Generate colors config
 gulp.task('colors-config', () => {
   fs.createReadStream(file_paths.nightshade + 'color/lib/config.json')
@@ -102,7 +107,7 @@ gulp.task('critical', ['sass', 'compile'], (cb) =>  {
 
 
 // Compile templates to html
-gulp.task('compile', () => {
+gulp.task('compile', ['clean-views'], () => {
   const env = nunjucksRender.nunjucks.configure(['./app/views/', './node_modules/@casper/'], {watch: false});
 
   markdown.register(env, marked);
@@ -187,8 +192,20 @@ gulp.task('browser-sync', () => {
 
 });
 
+// Sass/scss linter
+gulp.task('sass-lint', () => {
+  gulp.src([
+    'app/**/*.scss',
+    './node_modules/nightshade-core/src/**/*.scss'
+  ])
+  .pipe(plumber())
+  .pipe(sassLint())
+  .pipe(sassLint.format())
+  .pipe(sassLint.failOnError())
+});
 
-//Sassdoc task
+
+// Sassdoc task
 gulp.task('sassdoc', () => {
   return gulp.src([
     'app/**/*.scss',
@@ -199,12 +216,43 @@ gulp.task('sassdoc', () => {
   }));
 });
 
-// clean tasks
-// @@@ TODO: tasks to remove generated files (Dist)
 
+// Optimize SVG, PNG, GIF images
+// TODO: Include modules folder and correctly map to dist
+gulp.task('images', () => {
+  return gulp.src('./app/assets/img/**/*.{svg,png,gif}')
+    .pipe(imagemin({
+      interlaced: true,
+      svgoPlugins: [{removeViewBox: false}],
+      use: [pngquant({quality: '86'})]
+    }))
+    .pipe(gulp.dest('./dist/assets/img'));
+});
+
+
+// Clean tasks
+gulp.task('clean-css', () => {
+  del(['./dist/assets/css/*']);
+});
+
+gulp.task('clean-js', () => {
+  del(['./dist/assets/js/*']);
+});
+
+gulp.task('clean-images', () => {
+  del(['./dist/assets/img/*']);
+});
+
+gulp.task('clean-views', () => {
+  del(['./dist/**/*.html']);
+});
+
+gulp.task('clean', () => {
+  del(['./dist/*']);
+});
 
 // Start task (default gulp)
-gulp.task('default', ['precompile', 'compile', 'fonts', 'sass', 'sassdoc', 'browser-sync']);
+gulp.task('default', ['clean', 'precompile', 'compile', 'fonts', 'sass', 'sassdoc', 'browser-sync']);
 
 
 // Build task
