@@ -302,7 +302,7 @@ gulp.task('clean-views', () => {
 });
 
 gulp.task('clean', () => {
-  del(['./dist/*']);
+  del(['./dist']);
 });
 
 // Start task (default gulp)
