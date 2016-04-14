@@ -306,9 +306,11 @@ gulp.task('clean', () => {
   del(['./dist']);
 });
 
+
 // Start task (default gulp)
 gulp.task('default', ['clean', 'precompile', 'compile', 'fonts', 'sass', 'sassdoc', 'browser-sync']);
 
 
 // Build task
-gulp.task('build', ['critical']);
+gulp.task('build', ['clean', 'precompile', 'compile', 'fonts', 'sass']);
+
