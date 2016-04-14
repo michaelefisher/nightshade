@@ -1,0 +1,14 @@
+tooltips:
+  name: "Tooltip"
+  description: "A small content pop-up that appears when mouse hovers over an element."
+  variants:
+    -
+      name: "Default"
+      description: "Primary tooltip instance. Pass in content"
+      html: {{ button('Primary Button') }}
+      stylesheet_import:
+        path: "src/tooltips/_index.scss"
+        code: "@import './node_modules/@casper/nightshade-core/src/buttons/base';"
+      macro_import:
+        path: "src/tooltips/tooltips.macros.html"
+        code: "{% from 'nightshade-core/src/tooltips/tooltips.macros.html' import tooltip %}"

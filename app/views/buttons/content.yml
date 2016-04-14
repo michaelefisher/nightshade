@@ -1,0 +1,10 @@
+buttons:
+  name: Buttons
+  description: "An element that completes an action."
+  variants:
+    -
+      name: "Default"
+      description: "Our primary button."
+      paths:
+        macro: "nightshade-core/src/tooltips/tooltip.macros.html"
+        styles: "node_modules/@casper/nightshade-core/src/tooltips/index"
