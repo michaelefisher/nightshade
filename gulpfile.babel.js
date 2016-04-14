@@ -28,6 +28,7 @@ import { config } from './config.js';
 
 const browserSync = browsersync.create();
 
+// @TODO move to config.js
 const file_paths =  {
     'base': './app',
     'dest': './dist',
@@ -54,6 +55,8 @@ const createFile = (name, data) => {
 //   }));
 // });
 
+// Creates .env file.
+// @TODO automate this as part of setup
 gulp.task('setup', () => {
   fs.createReadStream('.sample-env')
     .pipe(fs.createWriteStream('.env'));
@@ -62,7 +65,6 @@ gulp.task('setup', () => {
 
 // Generates a file of all the icons
 gulp.task('icons-config', () => {
-
   const dir = './node_modules/@casper/nightshade-icons/lib/storefront';
   const icons = [];
 
@@ -174,7 +176,6 @@ gulp.task('browser-sync', () => {
           next();
       }
     });
-
 
   gulp.watch([
     'app/assets/js/**/*.js',
