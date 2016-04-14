@@ -242,7 +242,7 @@ gulp.task('images', () => {
 
 
 // Publish to AWS
-gulp.task('publish', () => {
+gulp.task('publish', ['build'], () => {
   const day = 86400;
   const farFuture = {'Cache-Control': `max-age=${day * 365}`};
   const future = {'Cache-Control': `max-age=${day * 7}`};
