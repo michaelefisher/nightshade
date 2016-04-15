@@ -25,7 +25,7 @@ import awspublish from 'gulp-awspublish';
 import gulpIf from 'gulp-if';
 import { config } from './config.js';
 
-
+const dot = dotenv.config();
 const browserSync = browsersync.create();
 
 // @TODO move to config.js
