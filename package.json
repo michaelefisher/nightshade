@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/CasperSleep/Ando",
   "devDependencies": {
-    "@casper/nightshade-core": "github:caspersleep/nightshade-core#v2.0.0",
+    "@casper/nightshade-core": "github:caspersleep/nightshade-core#v2.0.1",
     "browser-sync": "^2.11.1",
     "critical": "^0.7.0",
     "dotenv": "^2.0.0",
